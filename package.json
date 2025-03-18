@@ -9,6 +9,7 @@
         "@inertiajs/vue3": "^2.0.0",
         "@tailwindcss/forms": "^0.5.3",
         "@tailwindcss/vite": "^4.0.0",
+        "@types/leaflet": "^1.9.16",
         "@vitejs/plugin-vue": "^5.0.0",
         "autoprefixer": "^10.4.12",
         "axios": "^1.7.4",
@@ -20,6 +21,7 @@
         "vue": "^3.4.0"
     },
     "dependencies": {
-        "@vueuse/core": "^13.0.0"
+        "@vueuse/core": "^13.0.0",
+        "leaflet-snap": "^0.0.4"
     }
 }

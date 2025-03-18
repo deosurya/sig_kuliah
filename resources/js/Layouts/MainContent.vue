@@ -2,22 +2,25 @@
     <div
         class="px-8 py-6 bg-white/50 dark:bg-black/70 rounded-lg shadow-lg min-h-[40dvw] text-white"
     >
-        <div class="mb-2 flex items-center justify-end">
-            <PrimaryButton @click="initMap">Refresh</PrimaryButton>
+        <div class="mb-2 flex items-center justify-end gap-2">
+            <PrimaryButton @click="logDrawnItemsCoords"
+                >Log Coordinates</PrimaryButton
+            >
+            <PrimaryButton @click="initMap">Reset</PrimaryButton>
         </div>
         <div id="map" class="w-full px-8 py-10"></div>
     </div>
 </template>
 
 <script setup>
-import { onMounted } from "vue";
+import { onMounted, watch } from "vue";
 import { useGeolocation } from "@vueuse/core";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 
-const { coords, locatedAt, error, resume, pause } = useGeolocation();
+const { coords } = useGeolocation();
 
 let map;
-let marker;
+let drawnItems = new L.FeatureGroup();
 
 var osm = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
@@ -48,8 +51,8 @@ var baseMaps = {
 };
 
 const defaultCoords = {
-    latitude: -8.678046878394552,
-    longitude: 115.19820570945741,
+    latitude: -8.79639915819047,
+    longitude: 115.17645835876466,
 };
 
 const initMap = () => {
@@ -62,45 +65,69 @@ const initMap = () => {
         zoom: 18,
     });
 
-    marker = L.marker([defaultCoords.latitude, defaultCoords.longitude])
-        .addTo(map)
-        .bindPopup("Kamu di sini")
-        .openPopup();
-
     if (
         coords.value.latitude != Infinity &&
         coords.value.longitude != Infinity
     ) {
         map.setView([coords.value.latitude, coords.value.longitude], 18);
-
-        if (marker) {
-            map.removeLayer(marker);
-        }
-
-        marker = L.marker([coords.value.latitude, coords.value.longitude])
-            .addTo(map)
-            .bindPopup("Kamu di sini")
-            .openPopup();
     }
 
     osm.addTo(map);
 
     L.control.layers(baseMaps).addTo(map);
 
-    map.on("click", onClickMap);
+    // Add drawing plugin
+    drawnItems = new L.FeatureGroup();
+    map.addLayer(drawnItems);
+
+    var drawControl = new L.Control.Draw({
+        edit: {
+            featureGroup: drawnItems,
+        },
+        draw: {
+            polyline: true,
+            polygon: true,
+            rectangle: true,
+            circle: true,
+            marker: true,
+        },
+    });
+
+    map.addControl(drawControl);
+
+    map.on(L.Draw.Event.CREATED, function (event) {
+        var layer = event.layer;
+        drawnItems.addLayer(layer);
+        if (event.layerType === "marker") {
+            var popupContent = `Koordinat: ${layer.getLatLng().lat}, ${
+                layer.getLatLng().lng
+            }`;
+            layer.bindPopup(popupContent).openPopup();
+        }
+    });
 };
 
-const onClickMap = (e) => {
-    if (marker) {
-        map.removeLayer(marker);
-    }
-
-    marker = L.marker([e.latlng.lat, e.latlng.lng])
-        .addTo(map)
-        .bindPopup(
-            "Kamu menekan koordinat: " + e.latlng.lat + ", " + e.latlng.lng
-        )
-        .openPopup();
+const logDrawnItemsCoords = () => {
+    drawnItems.eachLayer((layer) => {
+        if (layer instanceof L.Marker) {
+            console.log("Marker:", layer.getLatLng());
+        } else if (layer instanceof L.Polyline) {
+            console.log("Polyline:", layer.getLatLngs());
+        } else if (layer instanceof L.Polygon) {
+            console.log("Polygon:", layer.getLatLngs());
+        } else if (layer instanceof L.Rectangle) {
+            console.log("Rectangle:", layer.getLatLngs());
+        } else if (layer instanceof L.Circle) {
+            console.log(
+                "Circle:",
+                layer.getLatLng(),
+                "Radius:",
+                layer.getRadius()
+            );
+        } else if (layer instanceof L.CircleMarker) {
+            console.log("CircleMarker:", layer.getLatLng());
+        }
+    });
 };
 
 onMounted(() => {
@@ -113,3 +140,4 @@ onMounted(() => {
     height: 700px;
 }
 </style>
+scriptscript
