@@ -3,10 +3,10 @@
         class="px-8 py-6 bg-white/50 dark:bg-black/70 rounded-lg shadow-lg min-h-[40dvw] text-white"
     >
         <div class="mb-2 flex items-center justify-end gap-2">
-            <PrimaryButton @click="logDrawnItemsCoords"
+            <!-- <PrimaryButton @click="logDrawnItemsCoords"
                 >Log Coordinates</PrimaryButton
-            >
-            <PrimaryButton @click="initMap">Reset</PrimaryButton>
+            > -->
+            <PrimaryButton @click="initMap">Refresh</PrimaryButton>
         </div>
         <div id="map" class="w-full px-8 py-10"></div>
     </div>
@@ -14,7 +14,7 @@
 
 <script setup>
 import { onMounted, watch } from "vue";
-import { useGeolocation } from "@vueuse/core";
+import { get, useGeolocation } from "@vueuse/core";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 
 const { coords } = useGeolocation();
@@ -74,6 +74,8 @@ const initMap = () => {
 
     osm.addTo(map);
 
+    getMarkers();
+
     L.control.layers(baseMaps).addTo(map);
 
     // Add drawing plugin
@@ -130,6 +132,21 @@ const logDrawnItemsCoords = () => {
     });
 };
 
+const getMarkers = async () => {
+    try {
+        const response = await axios.get("/api/markers");
+        const markers = response.data;
+
+        markers.forEach((marker) => {
+            L.marker([marker.latitude, marker.longitude])
+                .addTo(map)
+                .bindPopup(marker.keterangan);
+        });
+    } catch (error) {
+        console.error("Error fetching markers:", error);
+    }
+};
+
 onMounted(() => {
     initMap();
 });
@@ -140,4 +157,3 @@ onMounted(() => {
     height: 700px;
 }
 </style>
-scriptscript

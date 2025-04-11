@@ -5,6 +5,9 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createApp, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
+import PrimeVue from 'primevue/config';
+import Aura from '@primeuix/themes/aura';
+import ToastService from 'primevue/toastservice';
 
 const appName = 'SIG - 2205551008';
 
@@ -19,6 +22,13 @@ createInertiaApp({
         return createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(ZiggyVue)
+            .use(PrimeVue, {
+                theme: {
+                    preset: Aura
+                },
+                ripple: true
+            })
+            .use(ToastService)
             .mount(el);
     },
     progress: {
