@@ -202,7 +202,7 @@ const initMap = () => {
         coords.value.latitude != Infinity &&
         coords.value.longitude != Infinity
     ) {
-        map.setView([coords.value.latitude, coords.value.longitude], 18);
+        map.setView([coords.value.latitude, coords.value.longitude], 13);
     }
 
     osm.addTo(map);
