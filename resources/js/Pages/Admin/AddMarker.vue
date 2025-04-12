@@ -7,7 +7,8 @@
                 Tambah Marker
             </h2>
             <p class="text-gray-500">
-                (Klik pada peta untuk menambahkan marker)
+                (Klik pada peta untuk menambahkan marker / klik pada marker
+                untuk menghapus)
             </p>
         </template>
 
@@ -194,7 +195,7 @@ const initMap = () => {
 
     map = L.map("map", {
         center: [defaultCoords.latitude, defaultCoords.longitude],
-        zoom: 18,
+        zoom: 13,
     });
 
     if (

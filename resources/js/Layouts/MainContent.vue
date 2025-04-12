@@ -62,7 +62,7 @@ const initMap = () => {
 
     map = L.map("map", {
         center: [defaultCoords.latitude, defaultCoords.longitude],
-        zoom: 18,
+        zoom: 13,
     });
 
     if (

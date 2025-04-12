@@ -32,9 +32,12 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::prefix('api')->middleware('auth')->group(function () {
-    Route::get('/markers', [MarkerController::class, 'index']);
     Route::post('/markers', [MarkerController::class, 'store']);
     Route::delete('/markers/{marker}', [MarkerController::class, 'destroy']);
+});
+
+Route::prefix('api')->group(function () {
+    Route::get('/markers', [MarkerController::class, 'index']);
 });
 
 require __DIR__ . '/auth.php';
